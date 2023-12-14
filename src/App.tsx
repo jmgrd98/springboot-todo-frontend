@@ -1,16 +1,30 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import { Button, Table } from 'antd';
 import axios from 'axios';
+import { tableStyle, buttonStyle } from './styles';
+import { Button, Table, Space } from 'antd';
+import ModalComponent from './components/Modal';
 
 function App() {
 
   const [todos, setTodos] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const fetchData = async () => {
     try {
       const result = await axios.get("http://localhost:8080/todos");
-      console.log(result)
       setTodos(result.data);
     } catch(err) {
       console.error(err);
@@ -20,6 +34,10 @@ function App() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const addTodo = async () => {
+    showModal();
+  };
 
   const tableColumns = [
     {
@@ -37,12 +55,28 @@ function App() {
       dataIndex: 'description',
       key: 'description',
     },
+    {
+      title: '',
+      dataIndex: 'imgUrl',
+      key: 'imgUrl'
+    },
+    {
+      title: '',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button>Concluir</Button>
+        </Space>
+      ),
+    },
   ];
 
   return (
     <main>
-      <Button type="primary">Adicionar tarefa</Button>
-      <Table dataSource={todos} columns={tableColumns} />
+      <Button type="primary" style={buttonStyle} onClick={addTodo}>Adicionar tarefa</Button>
+      <Table dataSource={todos} columns={tableColumns} style={tableStyle} />
+
+      <ModalComponent isModalOpen={isModalOpen} handleCancel={handleCancel} handleOk={handleOk} />
     </main>
   )
 }
