@@ -51,25 +51,30 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const addTodo = async () => {
     try {
       const values = await form.validateFields();
-
+  
       // Check if there's an image upload
       if (imageUpload) {
         // Set newTodo state with the image URL
         await uploadImage();
       } else {
         // No image upload, use values directly
-        setNewTodo(values);
+        setNewTodo({ ...values, imgUrl: '' });
       }
-
-      // Dispatch the action with the updated newTodo
-      dispatch({ type: 'todos/addTodo', payload: newTodo });
-      console.log(newTodo)
-      // Reset form fields and close the modal
-      form.resetFields();
-      handleOk();
     } catch (error) {
       console.error('Error adding todo:', error);
     } finally {
+      // Reset form fields and close the modal
+      form.resetFields();
+      handleOk();
+    }
+  };
+  
+  useEffect(() => {
+    // This effect runs whenever the imageUrl state is updated
+    if (imageUrl) {
+      // Dispatch the action with the updated newTodo
+      dispatch({ type: 'todos/addTodo', payload: newTodo });
+  
       // Reset newTodo state and imageUpload
       setNewTodo({
         title: '',
@@ -78,27 +83,33 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       });
       setImageUpload(null);
     }
-  };
-
+  }, [imageUrl]);
+  
   const uploadImage = async () => {
     try {
       if (!imageUpload) {
         return;
       }
-
+  
       const file = imageUpload.originFileObj;
       const storageRef = ref(storage, `images/${file.name}`);
-
-      await uploadBytes(storageRef, file);
+  
+      const uploadTask = uploadBytes(storageRef, file);
+  
+      // Wait for the upload to complete
+      await uploadTask;
+  
       const downloadURL = await getDownloadURL(storageRef);
       setImageUrl(downloadURL);
-
+  
       console.log('File uploaded successfully. Download URL:', downloadURL);
     } catch (error) {
       console.error('Error uploading file:', error);
-      throw error; // Rethrow the error to be caught in the addTodo catch block
+      throw error;
     }
   };
+  
+  
 
   return (
     <Modal title="Adicionar Tarefa" open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>

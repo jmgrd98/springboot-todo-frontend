@@ -35,14 +35,10 @@ function App() {
     dispatch({ type: 'todos/deleteTodo', payload: id });
   };
 
-  const addTodo = async () => {
-    showModal();
-  };
-
   const editTodo = (updatedTodo) => {
     showModal();
     dispatch(editTodoSuccess(updatedTodo));
-    handleOk(); // Close the modal or perform any other necessary actions
+    handleOk();
   };
 
   const handleDone = async (record: any) => {
@@ -98,7 +94,7 @@ function App() {
 
   return (
     <main>
-      <Button type="primary" style={buttonStyle} onClick={addTodo}>
+      <Button type="primary" style={buttonStyle} onClick={showModal}>
         Adicionar tarefa
       </Button>
       <Table dataSource={todos} columns={tableColumns} style={tableStyle} scroll={tableScroll} />
