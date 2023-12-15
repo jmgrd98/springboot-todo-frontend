@@ -13,6 +13,7 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       imgUrl: ''
     });
     const [mediaUpload, setImageUpload] = useState(null);
+    const [imageUrl, setImageUrl] = useState("");
 
     const [form] = Form.useForm();
 
@@ -31,14 +32,39 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           } else if (info.file.status === 'error') {
             message.error(`${info.file.name} file upload failed.`);
           }
+          setImageUpload(info.file);
         },
       };
 
       const addTodo = async () => {
-        const result = await axios.post("http://localhost:8080/todos");
-        console.log(result);
-        // setNewTodo(...prevState, result);
+        try {
+          // Validate the form fields
+          await form.validateFields();
+      
+          // Get the latest form values
+          const formValues = form.getFieldsValue();
+      
+          // Check if an image was uploaded and set the image URL
+          const imgUrl = imageUrl || newTodo.imgUrl;
+      
+          // Update the newTodo state with the form values and image URL
+          setNewTodo({
+            ...formValues,
+            imgUrl: imgUrl,
+          });
+      
+          // Send the request to add the todo to the server
+          await axios.post("http://localhost:8080/todos", newTodo);
+          console.log('Todo added successfully.');
+      
+          // Close the modal after successfully adding the todo
+          handleOk();
+        } catch (error) {
+          console.error('Error adding todo:', error);
+        }
       };
+      
+      
 
       const uploadImage = async () => {
         try {
@@ -50,11 +76,12 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           const file = mediaUpload.originFileObj;
           console.log(file)
           const storageRef = ref(storage, `images/${file.name}`);
+          
     
           await uploadBytes(storageRef, file);
-          
           const downloadURL = await getDownloadURL(storageRef);
-    
+          setImageUrl(downloadURL);
+
           console.log('File uploaded successfully. Download URL:', downloadURL);
         } catch (error) {
           console.error('Error uploading file:', error);
@@ -67,12 +94,12 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       <Form
       form={form}
     >
-      <Form.Item label="Título">
-        <Input placeholder="Escreva o título" />
-      </Form.Item>
-      <Form.Item label="Descrição">
-        <Input placeholder="Escreva a descrição" />
-      </Form.Item>
+      <Form.Item label="Título" name="title" rules={[{ required: true, message: 'Please enter a title' }]}>
+          <Input placeholder="Escreva o título" value={newTodo.title} />
+        </Form.Item>
+        <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
+          <Input placeholder="Escreva a descrição" value={newTodo.description} />
+        </Form.Item>
 
       <Upload {...props}>
     <Button onClick={uploadImage} icon={<UploadOutlined />}>Escolher imagem</Button>

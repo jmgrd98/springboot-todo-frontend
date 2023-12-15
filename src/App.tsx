@@ -1,14 +1,16 @@
-import './App.css';
-import { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { tableStyle, buttonStyle } from './styles';
 import { Button, Table, Space } from 'antd';
 import ModalComponent from './components/Modal';
+import { addTodoSuccess, deleteTodoSuccess, fetchTodosSuccess } from './redux/todosSlice';
+import './App.css'
 
 function App() {
+  const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todos);
 
-  const [todos, setTodos] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -22,11 +24,23 @@ function App() {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    dispatch(fetchTodosSuccess());
+  }, [dispatch]);
+
+  const handleDelete = (id) => {
+    dispatch(deleteTodoSuccess(id));
+  };
+
+  const addTodoHandler = (todo) => {
+    dispatch({ type: 'todos/addTodo', payload: todo });
+  };
+
   const fetchData = async () => {
     try {
       const result = await axios.get("http://localhost:8080/todos");
-      setTodos(result.data);
-    } catch(err) {
+      dispatch(fetchTodosSuccess(result.data));
+    } catch (err) {
       console.error(err);
     }
   };
@@ -58,14 +72,15 @@ function App() {
     {
       title: '',
       dataIndex: 'imgUrl',
-      key: 'imgUrl'
+      key: 'imgUrl',
     },
     {
       title: '',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button>Concluir</Button>
+          <Button key={`concluir-${record.id}`}>Concluir</Button>
+          <Button key={`excluir-${record.id}`} onClick={() => handleDelete(record.id)}>Excluir</Button>
         </Space>
       ),
     },
@@ -73,12 +88,14 @@ function App() {
 
   return (
     <main>
-      <Button type="primary" style={buttonStyle} onClick={addTodo}>Adicionar tarefa</Button>
-      <Table dataSource={todos} columns={tableColumns} style={tableStyle} />
+      <Button type="primary" onClick={addTodo}>
+        Adicionar tarefa
+      </Button>
+      <Table dataSource={todos} columns={tableColumns} />
 
       <ModalComponent isModalOpen={isModalOpen} handleCancel={handleCancel} handleOk={handleOk} />
     </main>
-  )
+  );
 }
 
-export default App
+export default App;
