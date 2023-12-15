@@ -5,6 +5,7 @@ import { Button, Table, Space } from 'antd';
 import ModalComponent from './components/Modal';
 import { addTodoSuccess, deleteTodoSuccess, fetchTodosSuccess } from './redux/todosSlice';
 import './App.css'
+import { tableStyle, buttonStyle } from './styles';
 
 function App() {
   const dispatch = useDispatch();
@@ -25,29 +26,12 @@ function App() {
   };
 
   useEffect(() => {
-    dispatch(fetchTodosSuccess());
-  }, [dispatch]);
+    dispatch({ type: 'todos/fetchTodos' });
+  }, [dispatch, todos]);
 
-  const handleDelete = (id) => {
-    dispatch(deleteTodoSuccess(id));
+  const handleDelete = (id: number) => {
+    dispatch({ type: 'todos/deleteTodo', payload: id });
   };
-
-  const addTodoHandler = (todo) => {
-    dispatch({ type: 'todos/addTodo', payload: todo });
-  };
-
-  const fetchData = async () => {
-    try {
-      const result = await axios.get("http://localhost:8080/todos");
-      dispatch(fetchTodosSuccess(result.data));
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const addTodo = async () => {
     showModal();

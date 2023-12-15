@@ -4,8 +4,12 @@ import { useState } from 'react';
 import axios from 'axios';
 import { storage } from '../firebase/firebase';
 import {ref, uploadBytes, listAll, getDownloadURL} from 'firebase/storage';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
+
+  const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todos);
 
     const [newTodo, setNewTodo] = useState({
       title: '',
@@ -54,8 +58,7 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           });
       
           // Send the request to add the todo to the server
-          await axios.post("http://localhost:8080/todos", newTodo);
-          console.log('Todo added successfully.');
+          dispatch({ type: 'todos/addTodo', payload: newTodo });
       
           // Close the modal after successfully adding the todo
           handleOk();

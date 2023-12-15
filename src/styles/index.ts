@@ -3,5 +3,5 @@ export const tableStyle = {
   };
 
 export const buttonStyle = {
-    margin: "20px"
+    margin: "50px"
   };

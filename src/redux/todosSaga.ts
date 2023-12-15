@@ -21,6 +21,7 @@ function* addTodoSaga(action: any) {
 }
 
 function* deleteTodoSaga(action: any) {
+  console.log("ENTROU NA SAGA")
   try {
     yield axios.delete(`http://localhost:8080/todos/${action.payload}`);
     yield put(deleteTodoSuccess(action.payload));

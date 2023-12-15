@@ -5,7 +5,7 @@ const todosSlice = createSlice({
   initialState: [],
   reducers: {
     fetchTodosSuccess: (state, action) => {
-      return action.payload;
+      return [...action.payload];
     },
     fetchTodosFailure: (state, action) => {
       // Handle failure state
