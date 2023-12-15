@@ -43,22 +43,10 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       const addTodo = async () => {
         try {
           // Validate the form fields
-          await form.validateFields();
-      
-          // Get the latest form values
-          const formValues = form.getFieldsValue();
-      
-          // Check if an image was uploaded and set the image URL
-          const imgUrl = imageUrl || newTodo.imgUrl;
-      
-          // Update the newTodo state with the form values and image URL
-          setNewTodo({
-            ...formValues,
-            imgUrl: imgUrl,
-          });
+          const values = await form.validateFields();
       
           // Send the request to add the todo to the server
-          dispatch({ type: 'todos/addTodo', payload: newTodo });
+          dispatch({ type: 'todos/addTodo', payload: values });
       
           // Close the modal after successfully adding the todo
           handleOk();
@@ -98,10 +86,10 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       form={form}
     >
       <Form.Item label="Título" name="title" rules={[{ required: true, message: 'Please enter a title' }]}>
-          <Input placeholder="Escreva o título" value={newTodo.title} />
+          <Input placeholder="Escreva o título" />
         </Form.Item>
         <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
-          <Input placeholder="Escreva a descrição" value={newTodo.description} />
+          <Input placeholder="Escreva a descrição" />
         </Form.Item>
 
       <Upload {...props}>
