@@ -1,7 +1,6 @@
 import { Button, Modal, Form, Input, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { storage } from '../firebase/firebase';
 import {ref, uploadBytes, listAll, getDownloadURL} from 'firebase/storage';
 import { useDispatch, useSelector } from 'react-redux';
@@ -57,16 +56,18 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           }
       
           dispatch({ type: 'todos/addTodo', payload: values });
-      
+          form.resetFields();
           handleOk();
         } catch (error) {
           console.error('Error adding todo:', error);
         } finally {
+          // Clear newTodo and imageUpload after submitting
           setNewTodo({
             title: '',
             description: '',
-            imgUrl: 'https://firebasestorage.googleapis.com/v0/b/todo-d1377.appspot.com/o/images%2Feu.jpg?alt=media&token=0db0587f-b6e6-4787-adba-256da266c215'
-          })
+            imgUrl: '',
+          });
+          setImageUpload(null);
         }
       };
       
@@ -91,8 +92,6 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           console.log('File uploaded successfully. Download URL:', downloadURL);
         } catch (error) {
           console.error('Error uploading file:', error);
-        } finally {
-          setImageUpload(null);
         }
       }
 
