@@ -20,6 +20,15 @@ function* addTodoSaga(action: any) {
   }
 }
 
+function* editTodoSaga(action) {
+  try {
+    const response = yield axios.put(`http://localhost:8080/todos/${action.payload.id}`, action.payload);
+    yield put(editTodoSuccess(response.data));
+  } catch (error) {
+    yield put(editTodoFailure(error));
+  }
+}
+
 function* deleteTodoSaga(action: any) {
   try {
     yield axios.delete(`http://localhost:8080/todos/${action.payload}`);
