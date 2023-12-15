@@ -5,7 +5,7 @@ import { Button, Table, Space } from 'antd';
 import ModalComponent from './components/Modal';
 import { addTodoSuccess, deleteTodoSuccess, fetchTodosSuccess } from './redux/todosSlice';
 import './App.css'
-import { tableStyle, buttonStyle } from './styles';
+import { tableStyle, buttonStyle } from './styles/index';
 
 function App() {
   const dispatch = useDispatch();
@@ -72,10 +72,10 @@ function App() {
 
   return (
     <main>
-      <Button type="primary" onClick={addTodo}>
+      <Button type="primary" style={buttonStyle} onClick={addTodo}>
         Adicionar tarefa
       </Button>
-      <Table dataSource={todos} columns={tableColumns} />
+      <Table dataSource={todos} columns={tableColumns} style={tableStyle} />
 
       <ModalComponent isModalOpen={isModalOpen} handleCancel={handleCancel} handleOk={handleOk} />
     </main>

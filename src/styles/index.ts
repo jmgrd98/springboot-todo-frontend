@@ -1,5 +1,5 @@
 export const tableStyle = {
-    width: "100%"
+    width: "100vw"
   };
 
 export const buttonStyle = {
