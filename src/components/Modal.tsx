@@ -16,7 +16,7 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       description: '',
       imgUrl: ''
     });
-    const [mediaUpload, setImageUpload] = useState(null);
+    const [imageUpload, setImageUpload] = useState(null);
     const [imageUrl, setImageUrl] = useState("");
 
     const [form] = Form.useForm();
@@ -44,14 +44,29 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
         try {
           // Validate the form fields
           const values = await form.validateFields();
+
+          if (imageUpload) {
+            await uploadImage();
+
+            setNewTodo({
+              title: values.title,
+              description: values.description,
+              imgUrl: imageUrl,
+            });
+            console.log(imageUrl)
+          }
       
-          // Send the request to add the todo to the server
           dispatch({ type: 'todos/addTodo', payload: values });
       
-          // Close the modal after successfully adding the todo
           handleOk();
         } catch (error) {
           console.error('Error adding todo:', error);
+        } finally {
+          setNewTodo({
+            title: '',
+            description: '',
+            imgUrl: 'https://firebasestorage.googleapis.com/v0/b/todo-d1377.appspot.com/o/images%2Feu.jpg?alt=media&token=0db0587f-b6e6-4787-adba-256da266c215'
+          })
         }
       };
       
@@ -59,12 +74,12 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
 
       const uploadImage = async () => {
         try {
-          if (!mediaUpload) {
+          if (!imageUpload) {
             return;
           }
-          console.log(mediaUpload)
+          console.log(imageUpload)
     
-          const file = mediaUpload.originFileObj;
+          const file = imageUpload.originFileObj;
           console.log(file)
           const storageRef = ref(storage, `images/${file.name}`);
           
@@ -76,6 +91,8 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           console.log('File uploaded successfully. Download URL:', downloadURL);
         } catch (error) {
           console.error('Error uploading file:', error);
+        } finally {
+          setImageUpload(null);
         }
       }
 
