@@ -70,7 +70,6 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       handleOk();
       dispatch({ type: 'todos/addTodo', payload: newTodo });
       setNewTodo({
-        title: '',
         description: '',
         isCompleted: false,
         imgUrl: '',
