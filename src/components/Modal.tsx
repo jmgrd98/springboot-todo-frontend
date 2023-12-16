@@ -8,8 +8,7 @@ import Todo from '../models/Todo';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { buttonStyle } from '../styles';
-// import DropdownComponent from './Dropdown';
+import DropdownComponent from './Dropdown';
 
 const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
@@ -160,8 +159,7 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, description: e.target.value}))} />
         </Form.Item>
         <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Please enter a status' }]}>
-          <Dropdown menu={{ items }}>
-  {/* <a className="ant-dropdown-link" onClick={(e) => setStatus(e)}> */}
+          {/* <Dropdown menu={{ items }} >
     <Space>
       <>
       <Button onClick={(e) => setStatus(e)}>
@@ -170,10 +168,9 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
         </Button>
       </>
     </Space>
-  {/* </a> */}
-</Dropdown>
+</Dropdown> */}
 
-  {/* <DropdownComponent /> */}
+  <DropdownComponent />
 
         </Form.Item>
 
