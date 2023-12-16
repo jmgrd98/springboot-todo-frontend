@@ -52,14 +52,14 @@ function App() {
       key: 'id',
     },
     {
-      title: 'Título',
-      dataIndex: 'title',
-      key: 'title',
-    },
-    {
       title: 'Descrição',
       dataIndex: 'description',
       key: 'description',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'isCompleted',
+      key: 'isCompleted',
     },
     {
       title: 'Imagem',

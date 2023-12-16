@@ -12,7 +12,9 @@ import { DownOutlined } from '@ant-design/icons';
 const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
   const isEdit = useSelector((state) => state.todos.isEdit);
-  const { TextArea } = Input;
+
+  const [dropdownLabel, setDropdownLabel] = useState('Pendente');
+
 
   const [newTodo, setNewTodo] = useState<Todo>({
     description: '',
@@ -134,10 +136,35 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
     },
   ];
 
-  const setStatus = (e) => {
+  const setStatus = (e: any) => {
     e.preventDefault();
-    console.log(e.target.value)
-  }
+    const selectedStatus = e.key;
+    console.log(selectedStatus)
+
+    if (selectedStatus === '2') {
+      setDropdownLabel('Concluída');
+    }
+  
+    setNewTodo((prevTodo) => ({
+      ...prevTodo,
+      isCompleted: selectedStatus === '2'
+    }));
+  };
+  
+
+  const onChange: MenuProps['onChange'] = ({ e, key }) => {
+    const selectedStatus = e.key;
+    console.log(selectedStatus)
+
+    if (selectedStatus === '2') {
+      setDropdownLabel('Concluída');
+    }
+  
+    setNewTodo((prevTodo) => ({
+      ...prevTodo,
+      isCompleted: selectedStatus === '2'
+    }));
+  };
   
   
 
@@ -148,15 +175,15 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, description: e.target.value}))} />
         </Form.Item>
         <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Please enter a status' }]}>
-          {/* <TextArea rows={4} placeholder="Escreva a descrição" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, description: e.target.value}))} /> */}
-          <Dropdown menu={{ items }}>
-    <a onChange={(e) => setStatus(e)}>
-      <Space>
-        Pendente
-        <DownOutlined />
-      </Space>
-    </a>
-  </Dropdown>
+          <Dropdown menu={{ items, onChange }}>
+  <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+    <Space>
+      {dropdownLabel}
+      <DownOutlined />
+    </Space>
+  </a>
+</Dropdown>
+
         </Form.Item>
 
         <Upload {...props}>
