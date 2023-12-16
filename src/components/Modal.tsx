@@ -8,6 +8,8 @@ import Todo from '../models/Todo';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+import { buttonStyle } from '../styles';
+// import DropdownComponent from './Dropdown';
 
 const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
@@ -150,23 +152,7 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
     }));
   };
   
-
-  const onChange: MenuProps['onChange'] = ({ e, key }) => {
-    const selectedStatus = e.key;
-    console.log(selectedStatus)
-
-    if (selectedStatus === '2') {
-      setDropdownLabel('Concluída');
-    }
   
-    setNewTodo((prevTodo) => ({
-      ...prevTodo,
-      isCompleted: selectedStatus === '2'
-    }));
-  };
-  
-  
-
   return (
     <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
       <Form form={form}>
@@ -174,14 +160,20 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, description: e.target.value}))} />
         </Form.Item>
         <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Please enter a status' }]}>
-          <Dropdown menu={{ items, onChange }}>
-  <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+          <Dropdown menu={{ items }}>
+  {/* <a className="ant-dropdown-link" onClick={(e) => setStatus(e)}> */}
     <Space>
-      {dropdownLabel}
-      <DownOutlined />
+      <>
+      <Button onClick={(e) => setStatus(e)}>
+        {dropdownLabel}
+        <DownOutlined />
+        </Button>
+      </>
     </Space>
-  </a>
+  {/* </a> */}
 </Dropdown>
+
+  {/* <DropdownComponent /> */}
 
         </Form.Item>
 
