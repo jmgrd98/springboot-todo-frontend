@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { Button, Table, Space } from 'antd';
 import ModalComponent from './components/Modal';
-import { addTodoSuccess, deleteTodoSuccess, fetchTodosSuccess, editTodoSuccess } from './redux/todosSlice';
+import { addTodoSuccess, deleteTodoSuccess, fetchTodosSuccess, editTodoSuccess, setEditStatus } from './redux/todosSlice';
 import './App.css'
 import { tableStyle, buttonStyle } from './styles/index';
 import { FileImageOutlined, EditOutlined } from '@ant-design/icons';
@@ -15,18 +15,6 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [done, setDone] = useState(false);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
   useEffect(() => {
     dispatch({ type: 'todos/fetchTodos' });
   }, [dispatch, todos]);
@@ -35,17 +23,23 @@ function App() {
     dispatch({ type: 'todos/deleteTodo', payload: id });
   };
 
-  const editTodo = (updatedTodo) => {
-    showModal();
-    dispatch({ type: 'todos/editTodo', payload: updatedTodo});
-    handleOk();
-  };
+  const editTodo = async (updatedTodo) => {
+    dispatch({ type: 'todos/setEditStatus', payload: true});
+    setIsModalOpen(true);
+    try {
+      await axios.put(`http://localhost:8080/todos/${updatedTodo.id}`);
+      dispatch({ type: 'todos/editTodo', payload: updatedTodo});
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
-  const handleDone = async (record: any) => {
+  const handleDone = async (updatedTodo: any) => {
     setDone(true);
 
     try {
-      await axios.put(`http://localhost:8080/todos/${record.id}`)
+      await axios.put(`http://localhost:8080/todos/${updatedTodo.id}`);
+      dispatch({ type: 'todos/editTodo', payload: updatedTodo});
     } catch (err) {
       console.error(err);
     }
@@ -82,8 +76,8 @@ function App() {
       key: 'action',
       render: (_: any, record: any) => (
         <Space size="middle">
-          <Button key={`editar-${record.id}`} onClick={() => editTodo(record)}><EditOutlined /></Button>
-          <Button key={`concluir-${record.id}`} onClick={() => handleDone(record)}>{done ? 'Concluída' : 'Concluir'}</Button>
+          <Button key={`editar-${record.id}`} onClick={() => editTodo(record.id)}><EditOutlined /></Button>
+          <Button key={`concluir-${record.id}`} onClick={() => handleDone(record.id)}>{done ? 'Concluída' : 'Concluir'}</Button>
           <Button key={`excluir-${record.id}`} onClick={() => handleDelete(record.id)}>Excluir</Button>
         </Space>
       ),
@@ -94,12 +88,12 @@ function App() {
 
   return (
     <main>
-      <Button type="primary" style={buttonStyle} onClick={showModal}>
+      <Button type="primary" style={buttonStyle} onClick={() => setIsModalOpen(true)}>
         Adicionar tarefa
       </Button>
       <Table dataSource={todos} columns={tableColumns} style={tableStyle} scroll={tableScroll} />
 
-      <ModalComponent isModalOpen={isModalOpen} handleCancel={handleCancel} handleOk={handleOk} />
+      <ModalComponent isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} handleOk={() => setIsModalOpen(false)} />
     </main>
   );
 }

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos);
+  const isEdit = useSelector((state) => state.todos.isEdit);
   const { TextArea } = Input;
 
   const [newTodo, setNewTodo] = useState({
@@ -39,7 +39,6 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   };
 
   useEffect(() => {
-    // Effect to handle imageUrl state update
     if (imageUrl) {
       setNewTodo((prevTodo) => ({
         ...prevTodo,
@@ -52,30 +51,23 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
     try {
       const values = await form.validateFields();
   
-      // Check if there's an image upload
       if (imageUpload) {
-        // Set newTodo state with the image URL
         await uploadImage();
       } else {
-        // No image upload, use values directly
         setNewTodo({ ...values, imgUrl: '' });
       }
     } catch (error) {
       console.error('Error adding todo:', error);
     } finally {
-      // Reset form fields and close the modal
       form.resetFields();
       handleOk();
     }
   };
   
   useEffect(() => {
-    // This effect runs whenever the imageUrl state is updated
     if (imageUrl) {
-      // Dispatch the action with the updated newTodo
       dispatch({ type: 'todos/addTodo', payload: newTodo });
   
-      // Reset newTodo state and imageUpload
       setNewTodo({
         title: '',
         description: '',
@@ -96,7 +88,6 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   
       const uploadTask = uploadBytes(storageRef, file);
   
-      // Wait for the upload to complete
       await uploadTask;
   
       const downloadURL = await getDownloadURL(storageRef);
@@ -112,7 +103,7 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   
 
   return (
-    <Modal title="Adicionar Tarefa" open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
+    <Modal title={`${isEdit ? 'Adicionar' : 'Editar'} Tarefa`}open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
       <Form form={form}>
         <Form.Item label="Título" name="title" rules={[{ required: true, message: 'Please enter a title' }]}>
           <Input placeholder="Escreva o título" onChange={(e) => setNewTodo({title: e.target.value, description: newTodo.description, imgUrl: newTodo.imgUrl})} />

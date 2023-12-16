@@ -2,7 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const todosSlice = createSlice({
   name: 'todos',
-  initialState: [],
+  initialState: {
+    list: [],
+    isEdit: false,
+  },
   reducers: {
     fetchTodosSuccess: (state, action) => {
       return [...action.payload];
@@ -31,6 +34,9 @@ const todosSlice = createSlice({
     deleteTodoFailure: (state, action) => {
       console.error('Failed to delete todo:', action.payload);
     },
+    setEditStatus: (state, action) => {
+      return { ...state, isEdit: action.payload };
+    },
   },
 });
 
@@ -43,6 +49,7 @@ export const {
   editTodoFailure,
   deleteTodoSuccess,
   deleteTodoFailure,
+  setEditStatus
 } = todosSlice.actions;
 
 export default todosSlice.reducer;
