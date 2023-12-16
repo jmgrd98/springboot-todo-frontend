@@ -41,6 +41,7 @@ function* deleteTodoSaga(action: any) {
 function* watchTodosSaga() {
   yield takeLatest('todos/fetchTodos', fetchTodosSaga);
   yield takeLatest('todos/addTodo', addTodoSaga);
+  yield takeLatest('todos/editTodo', editTodoSaga);
   yield takeLatest('todos/deleteTodo', deleteTodoSaga);
 }
 

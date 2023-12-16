@@ -37,7 +37,7 @@ function App() {
 
   const editTodo = (updatedTodo) => {
     showModal();
-    dispatch(editTodoSuccess(updatedTodo));
+    dispatch({ type: 'todos/editTodo', payload: updatedTodo});
     handleOk();
   };
 
