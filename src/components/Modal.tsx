@@ -67,6 +67,15 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       handleOk();
     }
   };
+
+  const editTodo = async (id: number) => {
+    console.log(isEdit)
+    try {
+      dispatch({ type: 'todos/editTodo', payload: id});
+    } catch (err) {
+      console.error(err);
+    }
+  }
   
   useEffect(() => {
     if (imageUrl) {
@@ -107,7 +116,7 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   
 
   return (
-    <Modal title={`${isEdit ? 'Adicionar' : 'Editar'} Tarefa`}open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
+    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`}open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
       <Form form={form}>
         <Form.Item label="Título" name="title" rules={[{ required: true, message: 'Please enter a title' }]}>
           <Input placeholder="Escreva o título" onChange={(e) => setNewTodo({title: e.target.value, description: newTodo.description, imgUrl: newTodo.imgUrl})} />

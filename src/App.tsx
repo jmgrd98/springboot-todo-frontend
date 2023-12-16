@@ -11,10 +11,15 @@ import Todo from './models/Todo';
 
 function App() {
   const dispatch = useDispatch();
-  const todos: Todo[] = useSelector((state) => state.todos || state.todos.list);
+  const todos: Todo[] = useSelector((state) => {
+    if (state.todos.length > 0) {
+      return state.todos;
+    }
+    return state.todos.list;
+  });
+  const isEdit = useSelector((state) => state.todos.isEdit);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [done, setDone] = useState(false);
 
   useEffect(() => {
     dispatch({ type: 'todos/fetchTodos' });
@@ -24,19 +29,12 @@ function App() {
     dispatch({ type: 'todos/deleteTodo', payload: id });
   };
 
-  const editTodo = async (id: number) => {
+  const editTodo = async () => {
     dispatch({ type: 'todos/setEditStatus', payload: true});
     setIsModalOpen(true);
-    try {
-      await axios.put(`http://localhost:8080/todos/${id.toString()}`);
-      dispatch({ type: 'todos/editTodo', payload: id});
-    } catch (err) {
-      console.error(err);
-    }
   }
 
   const handleDone = async (record: Todo) => {
-    console.log(record)
     try {
       const updatedTodo = { ...record, isCompleted: !record.isCompleted };
       await axios.put(`http://localhost:8080/todos/${record.id}`, updatedTodo);

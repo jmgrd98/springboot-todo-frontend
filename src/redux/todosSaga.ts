@@ -33,7 +33,6 @@ function* addTodoSaga(action: any) {
 function* editTodoSaga(action: any) {
   try {
     const response = yield axios.put(`http://localhost:8080/todos/${action.payload.id}`, action.payload);
-    // yield put(setEditStatus(false));
     yield put(editTodoSuccess(response.data));
   } catch (error) {
     yield put(editTodoFailure(error));

@@ -35,7 +35,7 @@ const todosSlice = createSlice({
       console.error('Failed to delete todo:', action.payload);
     },
     setEditStatus: (state, action) => {
-      state.isEdit = action.payload;
+      state.isEdit = !state.isEdit;
     },
   },
 });
