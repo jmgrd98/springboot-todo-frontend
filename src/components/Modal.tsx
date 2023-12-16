@@ -5,6 +5,9 @@ import { storage } from '../firebase/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useDispatch, useSelector } from 'react-redux';
 import Todo from '../models/Todo';
+import type { MenuProps } from 'antd';
+import { Dropdown, Space } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 
 const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
@@ -12,7 +15,6 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const { TextArea } = Input;
 
   const [newTodo, setNewTodo] = useState<Todo>({
-    title: '',
     description: '',
     imgUrl: '',
     isCompleted: false,
@@ -64,8 +66,17 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
     } finally {
       form.resetFields();
       handleOk();
+      dispatch({ type: 'todos/addTodo', payload: newTodo });
+      setNewTodo({
+        title: '',
+        description: '',
+        isCompleted: false,
+        imgUrl: '',
+      });
+      setImageUpload(null);
     }
   };
+  
 
   const editTodo = async (id: number) => {
     console.log(isEdit)
@@ -81,7 +92,6 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       dispatch({ type: 'todos/addTodo', payload: newTodo });
   
       setNewTodo({
-        title: '',
         description: '',
         isCompleted: false,
         imgUrl: imageUrl,
@@ -112,17 +122,41 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       throw error;
     }
   };
+
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: 'Pendente',
+    },
+    {
+      key: '2',
+      label: 'Concluída',
+    },
+  ];
+
+  const setStatus = (e) => {
+    e.preventDefault();
+    console.log(e.target.value)
+  }
   
   
 
   return (
     <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
       <Form form={form}>
-        <Form.Item label="Título" name="title" rules={[{ required: true, message: 'Please enter a title' }]}>
-          <Input placeholder="Escreva o título" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, title: e.target.value}))} />
-        </Form.Item>
         <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
-          <TextArea rows={4} placeholder="Escreva a descrição" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, description: e.target.value}))} />
+          <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, description: e.target.value}))} />
+        </Form.Item>
+        <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Please enter a status' }]}>
+          {/* <TextArea rows={4} placeholder="Escreva a descrição" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, description: e.target.value}))} /> */}
+          <Dropdown menu={{ items }}>
+    <a onChange={(e) => setStatus(e)}>
+      <Space>
+        Pendente
+        <DownOutlined />
+      </Space>
+    </a>
+  </Dropdown>
         </Form.Item>
 
         <Upload {...props}>
