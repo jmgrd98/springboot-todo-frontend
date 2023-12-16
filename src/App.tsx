@@ -32,6 +32,7 @@ function App() {
   const editTodo = async () => {
     dispatch({ type: 'todos/setEditStatus', payload: true});
     setIsModalOpen(true);
+    console.log(isEdit)
   }
 
   const handleDone = async (record: Todo) => {

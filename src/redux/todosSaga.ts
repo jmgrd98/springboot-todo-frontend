@@ -9,7 +9,9 @@ import {
   editTodoFailure,
   deleteTodoSuccess, 
   deleteTodoFailure,
-  setEditStatus
+  setEditStatus,
+  setEditStatusSuccess,
+  setEditStatusFailure
 } from './todosSlice';
 
 function* fetchTodosSaga() {
@@ -50,9 +52,9 @@ function* deleteTodoSaga(action: any) {
 
 function* setEditStatusSaga(action) {
   try {
-    yield put(setEditStatus(action.payload));
+    yield put(setEditStatusSuccess(action.payload));
   } catch (error) {
-    console.error(error);
+    yield put(setEditStatusFailure(error));
   }
 }
 
