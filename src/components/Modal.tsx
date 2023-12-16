@@ -4,17 +4,21 @@ import { useState, useEffect } from 'react';
 import { storage } from '../firebase/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useDispatch, useSelector } from 'react-redux';
+import Todo from '../models/Todo';
 
 const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
   const isEdit = useSelector((state) => state.todos.isEdit);
   const { TextArea } = Input;
 
-  const [newTodo, setNewTodo] = useState({
+  const [newTodo, setNewTodo] = useState<Todo>({
+    id: 0,
     title: '',
     description: '',
-    imgUrl: ''
+    imgUrl: '',
+    isCompleted: false,
   });
+
   const [imageUpload, setImageUpload] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
   const [form] = Form.useForm();

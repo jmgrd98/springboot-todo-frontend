@@ -7,10 +7,11 @@ import { addTodoSuccess, deleteTodoSuccess, fetchTodosSuccess, editTodoSuccess, 
 import './App.css'
 import { tableStyle, buttonStyle } from './styles/index';
 import { FileImageOutlined, EditOutlined } from '@ant-design/icons';
+import Todo from './models/Todo';
 
 function App() {
   const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos);
+  const todos: Todo[] = useSelector((state) => state.todos || state.todos.list);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [done, setDone] = useState(false);
@@ -23,23 +24,23 @@ function App() {
     dispatch({ type: 'todos/deleteTodo', payload: id });
   };
 
-  const editTodo = async (updatedTodo) => {
+  const editTodo = async (id: number) => {
     dispatch({ type: 'todos/setEditStatus', payload: true});
     setIsModalOpen(true);
     try {
-      await axios.put(`http://localhost:8080/todos/${updatedTodo.id}`);
-      dispatch({ type: 'todos/editTodo', payload: updatedTodo});
+      await axios.put(`http://localhost:8080/todos/${id.toString()}`);
+      dispatch({ type: 'todos/editTodo', payload: id});
     } catch (err) {
       console.error(err);
     }
   }
 
-  const handleDone = async (updatedTodo: any) => {
-    setDone(true);
-
+  const handleDone = async (record: Todo) => {
+    console.log(record)
     try {
-      await axios.put(`http://localhost:8080/todos/${updatedTodo.id}`);
-      dispatch({ type: 'todos/editTodo', payload: updatedTodo});
+      const updatedTodo = { ...record, isCompleted: !record.isCompleted };
+      await axios.put(`http://localhost:8080/todos/${record.id}`, updatedTodo);
+      dispatch({ type: 'todos/editTodo', payload: updatedTodo });
     } catch (err) {
       console.error(err);
     }
@@ -65,7 +66,7 @@ function App() {
       title: 'Imagem',
       dataIndex: 'imgUrl',
       key: 'imgUrl',
-      render: (imgUrl) => (
+      render: (imgUrl: string) => (
         <a href={imgUrl} target="_blank" rel="noopener noreferrer">
           <FileImageOutlined style={{ fontSize: '25px', cursor: 'pointer' }}  />
         </a>
@@ -74,10 +75,10 @@ function App() {
     {
       title: 'Ações',
       key: 'action',
-      render: (_: any, record: any) => (
+      render: (_: any, record: Todo) => (
         <Space size="middle">
           <Button key={`editar-${record.id}`} onClick={() => editTodo(record.id)}><EditOutlined /></Button>
-          <Button key={`concluir-${record.id}`} onClick={() => handleDone(record.id)}>{done ? 'Concluída' : 'Concluir'}</Button>
+          <Button key={`concluir-${record.id}`} onClick={() => handleDone(record)}>{record.isCompleted ? 'Concluída' : 'Concluir'}</Button>
           <Button key={`excluir-${record.id}`} onClick={() => handleDelete(record.id)}>Excluir</Button>
         </Space>
       ),
