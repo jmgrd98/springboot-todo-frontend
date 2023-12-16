@@ -12,7 +12,6 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   const { TextArea } = Input;
 
   const [newTodo, setNewTodo] = useState<Todo>({
-    id: 0,
     title: '',
     description: '',
     imgUrl: '',
@@ -84,11 +83,12 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
       setNewTodo({
         title: '',
         description: '',
-        imgUrl: '',
+        isCompleted: false,
+        imgUrl: imageUrl,
       });
       setImageUpload(null);
     }
-  }, [imageUrl]);
+  }, []);
   
   const uploadImage = async () => {
     try {
@@ -116,13 +116,13 @@ const ModalComponent = ({ isModalOpen, handleOk, handleCancel }) => {
   
 
   return (
-    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`}open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
+    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
       <Form form={form}>
         <Form.Item label="Título" name="title" rules={[{ required: true, message: 'Please enter a title' }]}>
-          <Input placeholder="Escreva o título" onChange={(e) => setNewTodo({title: e.target.value, description: newTodo.description, imgUrl: newTodo.imgUrl})} />
+          <Input placeholder="Escreva o título" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, title: e.target.value}))} />
         </Form.Item>
         <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
-          <TextArea rows={4} placeholder="Escreva a descrição" onChange={(e) => setNewTodo({title: newTodo.title, description: e.target.value, imgUrl: newTodo.imgUrl})} />
+          <TextArea rows={4} placeholder="Escreva a descrição" onChange={(e) => setNewTodo((prevTodo) => ({...prevTodo, description: e.target.value}))} />
         </Form.Item>
 
         <Upload {...props}>

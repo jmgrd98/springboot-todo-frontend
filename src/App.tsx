@@ -32,8 +32,8 @@ function App() {
   const editTodo = async () => {
     dispatch({ type: 'todos/setEditStatus', payload: true});
     setIsModalOpen(true);
-    console.log(isEdit)
-  }
+    console.log(isEdit);
+  };
 
   const handleDone = async (record: Todo) => {
     try {
@@ -43,7 +43,7 @@ function App() {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   const tableColumns = [
     {
@@ -76,7 +76,7 @@ function App() {
       key: 'action',
       render: (_: any, record: Todo) => (
         <Space size="middle">
-          <Button key={`editar-${record.id}`} onClick={() => editTodo(record.id)}><EditOutlined /></Button>
+          <Button key={`editar-${record.id}`} onClick={() => editTodo()}><EditOutlined /></Button>
           <Button key={`concluir-${record.id}`} onClick={() => handleDone(record)}>{record.isCompleted ? 'Concluída' : 'Concluir'}</Button>
           <Button key={`excluir-${record.id}`} onClick={() => handleDelete(record.id)}>Excluir</Button>
         </Space>
