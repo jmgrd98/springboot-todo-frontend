@@ -50,15 +50,6 @@ function* deleteTodoSaga(action: any) {
   }
 }
 
-function* setEditStatusSaga(action: any) {
-  console.log(action)
-  try {
-    yield put(setEditStatusSuccess(action.payload));
-  } catch (error) {
-    yield put(setEditStatusFailure(error));
-  }
-}
-
 function* watchTodosSaga() {
   yield takeLatest('todos/fetchTodos', fetchTodosSaga);
   yield takeLatest('todos/addTodo', addTodoSaga);
@@ -66,10 +57,7 @@ function* watchTodosSaga() {
   yield takeLatest('todos/deleteTodo', deleteTodoSaga);
 }
 
-function* watchEditStatusSaga() {
-  yield takeLatest('todos/setEditStatus', setEditStatusSaga);
-}
 
 export default function* rootSaga() {
-  yield all([watchTodosSaga(), watchEditStatusSaga()]);
+  yield all([watchTodosSaga()]);
 }

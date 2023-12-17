@@ -17,29 +17,27 @@ function App() {
     }
     return state.todos.list;
   });
-  const isEdit = useSelector((state: any) => {
-    // console.log(state);
-    return state.todos.isEdit;
-  });
-  
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     dispatch({ type: 'todos/fetchTodos' });
   }, [dispatch, todos]);
+
+  const handleAddTodo = () => {
+    setIsEdit(false);
+    setIsModalOpen(true);
+  }
 
   const handleDelete = (id: number) => {
     dispatch({ type: 'todos/deleteTodo', payload: id });
   };
 
   const editTodo = async () => {
-    try{
-      dispatch({ type: 'todos/setEditStatus', payload: true});
-      setIsModalOpen(true);
-    } catch(err) {
-      console.error(err);
-    }
+    setIsEdit(true);
+    setIsModalOpen(true);
+    console.log(isEdit)
   };
 
   const handleDone = async (record: any) => {
@@ -98,12 +96,12 @@ function App() {
 
   return (
     <main>
-      <Button type="primary" style={buttonStyle} onClick={() => setIsModalOpen(true)}>
+      <Button type="primary" style={buttonStyle} onClick={() => handleAddTodo()}>
         Adicionar tarefa
       </Button>
       <Table dataSource={todos} columns={tableColumns} style={tableStyle} scroll={tableScroll} />
 
-      <ModalComponent isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} handleOk={() => setIsModalOpen(false)} />
+      <ModalComponent isEdit={isEdit} isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} handleOk={() => setIsModalOpen(false)} />
     </main>
   );
 }

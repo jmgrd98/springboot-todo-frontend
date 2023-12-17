@@ -9,17 +9,22 @@ import DropdownComponent from './Dropdown';
 
 const ModalComponent: React.FC<{
   isModalOpen: boolean;
+  isEdit: boolean;
   handleOk: () => void;
   handleCancel: () => void;
-}> = ({ isModalOpen, handleOk, handleCancel }) => {
+}> = ({ isModalOpen, isEdit, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
-  const isEdit = useSelector((state) => state.todos.isEdit);
+  // const isEdit = useSelector((state) => state.todos.isEdit ?? false);
 
   const [newTodo, setNewTodo] = useState<Todo>({
     description: '',
     imgUrl: '',
     isCompleted: false,
   });
+
+  useEffect(() => {
+    console.log(isEdit)
+  }, [])
 
   const [imageUpload, setImageUpload] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
@@ -31,7 +36,7 @@ const ModalComponent: React.FC<{
     headers: {
       authorization: 'authorization-text',
     },
-    async onChange(info) {
+    async onChange(info: any) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
@@ -89,12 +94,6 @@ const ModalComponent: React.FC<{
     } finally {
       form.resetFields();
       handleOk();
-  
-      // setNewTodo({
-      //   description: '',
-      //   isCompleted: false,
-      //   imgUrl: '',
-      // });
       setImageUpload(null);
     }
   };
@@ -109,7 +108,7 @@ const ModalComponent: React.FC<{
   };
 
   return (
-    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
+    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={isEdit ? () => editTodo : addTodo} onCancel={handleCancel}>
       <Form form={form}>
         <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({ ...prevTodo, description: e.target.value }))} />

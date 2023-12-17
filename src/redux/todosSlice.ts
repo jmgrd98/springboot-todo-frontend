@@ -34,12 +34,6 @@ const todosSlice = createSlice({
     deleteTodoFailure: (state, action) => {
       console.error('Failed to delete todo:', action.payload);
     },
-    setEditStatusSuccess: (state, action) => {
-      state.isEdit = action.payload;
-    },
-    setEditStatusFailure: (state, action) => {
-      console.error('Failed to set edit status:', action.payload);
-    },
   },
 });
 
@@ -52,8 +46,6 @@ export const {
   editTodoFailure,
   deleteTodoSuccess,
   deleteTodoFailure,
-  setEditStatusSuccess,
-  setEditStatusFailure
 } = todosSlice.actions;
 
 export default todosSlice.reducer;
