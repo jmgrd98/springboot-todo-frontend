@@ -36,7 +36,6 @@ function App() {
   };
 
   const handleDone = async (record: any) => {
-    console.log(record)
     try {
       const updatedTodo = { ...record, isCompleted: !record.completed };
       await axios.put(`http://localhost:8080/todos/${record.id}`, updatedTodo);
@@ -59,8 +58,8 @@ function App() {
     },
     {
       title: 'Status',
-      dataIndex: 'isCompleted',
-      key: 'isCompleted',
+      dataIndex: 'completed',
+      key: 'completed',
       render: (isCompleted: boolean) => (
       <span>{isCompleted ? 'Concluída' : 'Pendente'}</span>
     ),
