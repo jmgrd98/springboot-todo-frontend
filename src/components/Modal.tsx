@@ -11,13 +11,14 @@ const ModalComponent: React.FC<{
   isModalOpen: boolean;
   isEdit: boolean;
   clearForm: boolean;
+  todoId: number;
   handleOk: () => void;
   handleCancel: () => void;
-}> = ({ isModalOpen, isEdit, clearForm, handleOk, handleCancel }) => {
+}> = ({ isModalOpen, isEdit, clearForm, todoId, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
 
   const currentTodo: Todo | undefined = useSelector((state: any) => {
-    return state.todos.find(todo => todo.id === 47);
+    return state.todos.find((todo: Todo) => todo.id === todoId);
   });
 
   const [newTodo, setNewTodo] = useState<Todo>({
@@ -49,6 +50,17 @@ const ModalComponent: React.FC<{
       setImageUpload(info.file);
       await uploadImage();
     },
+  };
+
+  const generateRules = () => {
+    if (isEdit) {
+      return [];
+    }
+
+    return [
+      { required: true, message: 'Please enter a description' },
+      { required: false, message: 'Please enter a status' }
+    ];
   };
 
   const handleStatusSelect = (selectedStatus: string) => {
@@ -134,10 +146,10 @@ const ModalComponent: React.FC<{
   return (
     <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={isEdit ? () => editTodo(47) : addTodo} onCancel={handleCancel}>
       <Form form={form}>
-        <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
+        <Form.Item label="Descrição" name="description" rules={generateRules()}>
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({ ...prevTodo, description: e.target.value }))} />
         </Form.Item>
-        <Form.Item label="Status" name="isCompleted" rules={[{ required: false, message: 'Please enter a status' }]}>
+        <Form.Item label="Status" name="isCompleted" rules={generateRules()}>
           <DropdownComponent onSelect={handleStatusSelect} />
         </Form.Item>
 

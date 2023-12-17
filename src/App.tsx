@@ -21,6 +21,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [clearForm, setClearForm] = useState(false);
+  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
 
   useEffect(() => {
     dispatch({ type: 'todos/fetchTodos' });
@@ -29,19 +30,20 @@ function App() {
   const handleAddTodo = () => {
     setIsEdit(false);
     setIsModalOpen(true);
+    setSelectedTodoId(null);
   }
 
   const handleDelete = (id: number) => {
     dispatch({ type: 'todos/deleteTodo', payload: id });
   };
 
-  const editTodo = async () => {
+  const editTodo = async (id: number) => {
     setIsEdit(true);
+    setSelectedTodoId(id);
     setIsModalOpen(true);
-    console.log(isEdit)
   };
 
-  const handleDone = async (record: any) => {
+  const handleDone = async (record: Todo) => {
     try {
       const updatedTodo = { ...record, isCompleted: !record.completed };
       await axios.put(`http://localhost:8080/todos/${record.id}`, updatedTodo);
@@ -83,9 +85,9 @@ function App() {
     {
       title: 'Ações',
       key: 'action',
-      render: (_: any, record: any) => (
+      render: (_: any, record: Todo) => (
         <Space size="middle">
-          <Button key={`editar-${record.id}`} onClick={() => editTodo()}><EditOutlined /></Button>
+          <Button key={`editar-${record.id}`} onClick={() => editTodo(record.id)}><EditOutlined /></Button>
           <Button key={`concluir-${record.id}`} onClick={() => handleDone(record)}>{record.completed ? 'Concluída' : 'Concluir'}</Button>
           <Button key={`excluir-${record.id}`} onClick={() => handleDelete(record.id)}>Excluir</Button>
         </Space>
@@ -107,7 +109,14 @@ function App() {
       </Button>
       <Table dataSource={todos} columns={tableColumns} style={tableStyle} scroll={tableScroll} />
 
-      <ModalComponent isEdit={isEdit} isModalOpen={isModalOpen} handleCancel={handleCancel} handleOk={handleCancel} clearForm={clearForm} />
+      <ModalComponent
+        isEdit={isEdit}
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+        handleOk={handleCancel}
+        clearForm={clearForm}
+        todoId={selectedTodoId} 
+      />
     </main>
   );
 }
