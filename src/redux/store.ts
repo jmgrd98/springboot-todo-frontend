@@ -1,10 +1,9 @@
-// store.js
 import { configureStore } from '@reduxjs/toolkit';
-import createSagaMiddleware from 'redux-saga'; // Import saga middleware
-import rootSaga from './todosSaga'; // Import root saga
+import createSagaMiddleware from 'redux-saga';
+import rootSaga from './todosSaga';
 import todosReducer from './todosSlice';
 
-const sagaMiddleware = createSagaMiddleware(); // Create saga middleware
+const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
   reducer: {

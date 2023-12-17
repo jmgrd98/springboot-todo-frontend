@@ -50,7 +50,8 @@ function* deleteTodoSaga(action: any) {
   }
 }
 
-function* setEditStatusSaga(action) {
+function* setEditStatusSaga(action: any) {
+  console.log(action)
   try {
     yield put(setEditStatusSuccess(action.payload));
   } catch (error) {

@@ -31,82 +31,30 @@ const ModalComponent: React.FC<{
     headers: {
       authorization: 'authorization-text',
     },
-    onChange(info) {
+    async onChange(info) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === 'done') {
         message.success(`${info.file.name} file uploaded successfully`);
+        setImageUpload(info.file);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
       }
       setImageUpload(info.file);
+      await uploadImage();
     },
   };
 
   const handleStatusSelect = (selectedStatus: string) => {
-    console.log(selectedStatus)
     setNewTodo((prevTodo) => ({
       ...prevTodo,
       isCompleted: selectedStatus !== 'Concluída',
     }));
-    console.log(newTodo.isCompleted)
   };
-
-  const addTodo = async () => {
-    try {
-      const values = await form.validateFields();
-  
-      if (imageUpload) {
-        await uploadImage();
-        console.log(imageUrl);
-        setNewTodo({ ...values, imgUrl: imageUrl });
-      } else {
-        setNewTodo({ ...values, imgUrl: '' });
-      }
-    } catch (error) {
-      console.error('Error adding todo:', error);
-    } finally {
-      form.resetFields();
-      handleOk();
-      if (imageUrl) {
-        dispatch({ type: 'todos/addTodo', payload: newTodo });
-      }
-  
-      setNewTodo({
-        description: '',
-        isCompleted: false,
-        imgUrl: '',
-      });
-      setImageUpload(null);
-    }
-  };
-  
-
-  const editTodo = async (id: number) => {
-    console.log(isEdit);
-    try {
-      dispatch({ type: 'todos/editTodo', payload: id });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    if (imageUrl) {
-      dispatch({ type: 'todos/addTodo', payload: newTodo });
-      console.log(imageUrl)
-
-      setNewTodo({
-        description: '',
-        isCompleted: false,
-        imgUrl: imageUrl,
-      });
-      setImageUpload(null);
-    }
-  }, [imageUrl]);
 
   const uploadImage = async () => {
+    const values = await form.validateFields();
     try {
       if (!imageUpload) {
         return;
@@ -121,7 +69,7 @@ const ModalComponent: React.FC<{
 
       const downloadURL = await getDownloadURL(storageRef);
       setImageUrl(downloadURL);
-
+      setNewTodo({...values, imgUrl: downloadURL});
       console.log('File uploaded successfully. Download URL:', downloadURL);
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -129,8 +77,39 @@ const ModalComponent: React.FC<{
     }
   };
 
+  const addTodo = async () => {
+    try {
+      const values = await form.validateFields();
+  
+        setNewTodo({...values});
+        console.log(newTodo)
+        dispatch({ type: 'todos/addTodo', payload: newTodo });
+      }  catch (error) {
+      console.error('Error adding todo:', error);
+    } finally {
+      form.resetFields();
+      handleOk();
+  
+      // setNewTodo({
+      //   description: '',
+      //   isCompleted: false,
+      //   imgUrl: '',
+      // });
+      setImageUpload(null);
+    }
+  };
+
+  const editTodo = async (id: number) => {
+    console.log(isEdit);
+    try {
+      dispatch({ type: 'todos/editTodo', payload: id });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
-    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={isEdit ? editTodo : addTodo} onCancel={handleCancel}>
+    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={addTodo} onCancel={handleCancel}>
       <Form form={form}>
         <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({ ...prevTodo, description: e.target.value }))} />

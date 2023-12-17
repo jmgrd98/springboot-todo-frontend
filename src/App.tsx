@@ -17,7 +17,11 @@ function App() {
     }
     return state.todos.list;
   });
-  const isEdit = useSelector((state) => state.todos.isEdit);
+  const isEdit = useSelector((state: any) => {
+    // console.log(state);
+    return state.todos.isEdit;
+  });
+  
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -30,9 +34,12 @@ function App() {
   };
 
   const editTodo = async () => {
-    dispatch({ type: 'todos/setEditStatus', payload: true});
-    setIsModalOpen(true);
-    console.log(isEdit);
+    try{
+      dispatch({ type: 'todos/setEditStatus', payload: true});
+      setIsModalOpen(true);
+    } catch(err) {
+      console.error(err);
+    }
   };
 
   const handleDone = async (record: any) => {
