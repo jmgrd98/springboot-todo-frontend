@@ -60,6 +60,9 @@ function App() {
       title: 'Status',
       dataIndex: 'isCompleted',
       key: 'isCompleted',
+      render: (isCompleted: boolean) => (
+        <span>{isCompleted ? 'Concluída' : 'Pendente'}</span>
+      ),
     },
     {
       title: 'Imagem',

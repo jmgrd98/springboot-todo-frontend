@@ -1,26 +1,27 @@
 import { Select, Divider } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const { Option } = Select;
 
-export default function DropdownComponent() {
-  const [items, setItems] = useState(['Pendente', 'Concluída']);
+interface DropdownComponentProps {
+  onSelect: (value: string) => void;
+}
 
-  const addItem = () => {
-    console.log('addItem');
-    setItems((prevItems) => [...prevItems, `New item ${prevItems.length}`]);
-  };
+const DropdownComponent: React.FC<DropdownComponentProps> = ({ onSelect }) => {
+  const [items] = useState(['Pendente', 'Concluída']);
 
   return (
     <Select
       allowClear
       style={{ width: 240 }}
       placeholder="Pendente"
+      onChange={(value) => onSelect(value)}
     >
       {items.map((item) => (
         <Option key={item}>{item}</Option>
       ))}
     </Select>
   );
-}
+};
+
+export default DropdownComponent;
