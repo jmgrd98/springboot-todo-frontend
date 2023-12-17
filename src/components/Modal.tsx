@@ -10,21 +10,21 @@ import DropdownComponent from './Dropdown';
 const ModalComponent: React.FC<{
   isModalOpen: boolean;
   isEdit: boolean;
+  clearForm: boolean;
   handleOk: () => void;
   handleCancel: () => void;
-}> = ({ isModalOpen, isEdit, handleOk, handleCancel }) => {
+}> = ({ isModalOpen, isEdit, clearForm, handleOk, handleCancel }) => {
   const dispatch = useDispatch();
-  // const isEdit = useSelector((state) => state.todos.isEdit ?? false);
+
+  const currentTodo: Todo | undefined = useSelector((state: any) => {
+    return state.todos.find(todo => todo.id === 47);
+  });
 
   const [newTodo, setNewTodo] = useState<Todo>({
     description: '',
     imgUrl: '',
     isCompleted: false,
   });
-
-  useEffect(() => {
-    console.log(isEdit)
-  }, [])
 
   const [imageUpload, setImageUpload] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
@@ -96,19 +96,43 @@ const ModalComponent: React.FC<{
       handleOk();
       setImageUpload(null);
     }
+    handleOk();
   };
 
-  const editTodo = async (id: number) => {
-    console.log(isEdit);
+  const editTodo = async () => {
     try {
-      dispatch({ type: 'todos/editTodo', payload: id });
+      if (!currentTodo) {
+        console.error('Todo not found.');
+        return;
+      }
+
+      const values = await form.validateFields();
+
+      const updatedTodo: Todo = {
+        ...currentTodo,
+        ...values,
+      };
+
+      dispatch({ type: 'todos/editTodo', payload: updatedTodo });
     } catch (err) {
       console.error(err);
     }
+    handleOk();
   };
+  
+  useEffect(() => {
+    if (!isModalOpen && clearForm) {
+      form.resetFields();
+      setNewTodo({
+        description: '',
+        imgUrl: '',
+        isCompleted: false,
+      });
+    }
+  }, [isModalOpen, clearForm, form]);
 
   return (
-    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={isEdit ? () => editTodo : addTodo} onCancel={handleCancel}>
+    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={isEdit ? () => editTodo(47) : addTodo} onCancel={handleCancel}>
       <Form form={form}>
         <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({ ...prevTodo, description: e.target.value }))} />

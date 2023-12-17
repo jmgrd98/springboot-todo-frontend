@@ -20,6 +20,7 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [clearForm, setClearForm] = useState(false);
 
   useEffect(() => {
     dispatch({ type: 'todos/fetchTodos' });
@@ -94,6 +95,11 @@ function App() {
 
   const tableScroll = { x: true };
 
+  const handleCancel = () => {
+    setClearForm(true);
+    setIsModalOpen(false);
+  }
+
   return (
     <main>
       <Button type="primary" style={buttonStyle} onClick={() => handleAddTodo()}>
@@ -101,7 +107,7 @@ function App() {
       </Button>
       <Table dataSource={todos} columns={tableColumns} style={tableStyle} scroll={tableScroll} />
 
-      <ModalComponent isEdit={isEdit} isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} handleOk={() => setIsModalOpen(false)} />
+      <ModalComponent isEdit={isEdit} isModalOpen={isModalOpen} handleCancel={handleCancel} handleOk={handleCancel} clearForm={clearForm} />
     </main>
   );
 }
