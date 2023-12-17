@@ -35,9 +35,10 @@ function App() {
     console.log(isEdit);
   };
 
-  const handleDone = async (record: Todo) => {
+  const handleDone = async (record: any) => {
+    console.log(record)
     try {
-      const updatedTodo = { ...record, isCompleted: !record.isCompleted };
+      const updatedTodo = { ...record, isCompleted: !record.completed };
       await axios.put(`http://localhost:8080/todos/${record.id}`, updatedTodo);
       dispatch({ type: 'todos/editTodo', payload: updatedTodo });
     } catch (err) {
@@ -61,8 +62,8 @@ function App() {
       dataIndex: 'isCompleted',
       key: 'isCompleted',
       render: (isCompleted: boolean) => (
-        <span>{isCompleted ? 'Concluída' : 'Pendente'}</span>
-      ),
+      <span>{isCompleted ? 'Concluída' : 'Pendente'}</span>
+    ),
     },
     {
       title: 'Imagem',
@@ -77,10 +78,10 @@ function App() {
     {
       title: 'Ações',
       key: 'action',
-      render: (_: any, record: Todo) => (
+      render: (_: any, record: any) => (
         <Space size="middle">
           <Button key={`editar-${record.id}`} onClick={() => editTodo()}><EditOutlined /></Button>
-          <Button key={`concluir-${record.id}`} onClick={() => handleDone(record)}>{record.isCompleted ? 'Concluída' : 'Concluir'}</Button>
+          <Button key={`concluir-${record.id}`} onClick={() => handleDone(record)}>{record.completed ? 'Concluída' : 'Concluir'}</Button>
           <Button key={`excluir-${record.id}`} onClick={() => handleDelete(record.id)}>Excluir</Button>
         </Space>
       ),

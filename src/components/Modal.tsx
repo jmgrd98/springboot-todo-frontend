@@ -45,11 +45,12 @@ const ModalComponent: React.FC<{
   };
 
   const handleStatusSelect = (selectedStatus: string) => {
+    console.log(selectedStatus)
     setNewTodo((prevTodo) => ({
       ...prevTodo,
-      isCompleted: selectedStatus === 'Concluída',
+      isCompleted: selectedStatus !== 'Concluída',
     }));
-    console.log(newTodo)
+    console.log(newTodo.isCompleted)
   };
 
   const addTodo = async () => {
@@ -134,7 +135,7 @@ const ModalComponent: React.FC<{
         <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({ ...prevTodo, description: e.target.value }))} />
         </Form.Item>
-        <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Please enter a status' }]}>
+        <Form.Item label="Status" name="isCompleted" rules={[{ required: false, message: 'Please enter a status' }]}>
           <DropdownComponent onSelect={handleStatusSelect} />
         </Form.Item>
 
