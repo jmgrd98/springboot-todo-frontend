@@ -55,9 +55,11 @@ const ModalComponent: React.FC<{
   const addTodo = async () => {
     try {
       const values = await form.validateFields();
-
+  
       if (imageUpload) {
         await uploadImage();
+        console.log(imageUrl);
+        setNewTodo({ ...values, imgUrl: imageUrl });
       } else {
         setNewTodo({ ...values, imgUrl: '' });
       }
@@ -66,7 +68,10 @@ const ModalComponent: React.FC<{
     } finally {
       form.resetFields();
       handleOk();
-      dispatch({ type: 'todos/addTodo', payload: newTodo });
+      if (imageUrl) {
+        dispatch({ type: 'todos/addTodo', payload: newTodo });
+      }
+  
       setNewTodo({
         description: '',
         isCompleted: false,
@@ -75,6 +80,7 @@ const ModalComponent: React.FC<{
       setImageUpload(null);
     }
   };
+  
 
   const editTodo = async (id: number) => {
     console.log(isEdit);
@@ -88,6 +94,7 @@ const ModalComponent: React.FC<{
   useEffect(() => {
     if (imageUrl) {
       dispatch({ type: 'todos/addTodo', payload: newTodo });
+      console.log(imageUrl)
 
       setNewTodo({
         description: '',
@@ -122,33 +129,15 @@ const ModalComponent: React.FC<{
   };
 
   return (
-    <Modal
-      title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`}
-      visible={isModalOpen}
-      onOk={isEdit ? editTodo : addTodo}
-      onCancel={handleCancel}
-    >
+    <Modal title={`${isEdit ? 'Editar' : 'Adicionar'} Tarefa`} open={isModalOpen} onOk={isEdit ? editTodo : addTodo} onCancel={handleCancel}>
       <Form form={form}>
-        <Form.Item
-          label="Descrição"
-          name="description"
-          rules={[{ required: true, message: 'Please enter a description' }]}
-        >
-          <Input
-            placeholder="Escreva a tarefa"
-            onChange={(e) =>
-              setNewTodo((prevTodo) => ({ ...prevTodo, description: e.target.value }))
-            }
-          />
+        <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'Please enter a description' }]}>
+          <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({ ...prevTodo, description: e.target.value }))} />
         </Form.Item>
-        <Form.Item
-          label="Status"
-          name="status"
-          rules={[{ required: true, message: 'Please enter a status' }]}
-        >
+        <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Please enter a status' }]}>
           <DropdownComponent onSelect={handleStatusSelect} />
         </Form.Item>
-  
+
         <Upload {...props}>
           <Button icon={<UploadOutlined />}>Escolher imagem</Button>
         </Upload>
