@@ -117,19 +117,22 @@ const ModalComponent: React.FC<{
         console.error('Todo not found.');
         return;
       }
-
+  
       const values = await form.validateFields();
-
+  
       const updatedTodo: Todo = {
         ...currentTodo,
         ...values,
       };
-
+  
       dispatch({ type: 'todos/editTodo', payload: updatedTodo });
     } catch (err) {
       console.error(err);
+    } finally {
+      form.resetFields();
+      handleOk();
+      setImageUpload(null);
     }
-    handleOk();
   };
   
   useEffect(() => {
