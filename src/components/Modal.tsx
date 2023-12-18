@@ -58,7 +58,7 @@ const ModalComponent: React.FC<{
     }
 
     return [
-      { required: true, message: 'Please enter a description' },
+      { required: false, message: 'Please enter a description' },
       { required: false, message: 'Please enter a status' }
     ];
   };
@@ -152,7 +152,7 @@ const ModalComponent: React.FC<{
         <Form.Item label="Descrição" name="description" rules={generateRules()}>
           <Input placeholder="Escreva a tarefa" onChange={(e) => setNewTodo((prevTodo) => ({ ...prevTodo, description: e.target.value }))} />
         </Form.Item>
-        <Form.Item label="Status" name="isCompleted" rules={generateRules()}>
+        <Form.Item label="Status" name="completed" rules={generateRules()}>
           <DropdownComponent onSelect={handleStatusSelect} />
         </Form.Item>
 
